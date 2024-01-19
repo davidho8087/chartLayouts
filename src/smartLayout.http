@@ -1,0 +1,19 @@
+###
+POST http://localhost:7001/api/smartLayout/create
+Content-Type: application/json
+
+{
+  "data": {
+    "prompt": "show me list of dior store",
+    "type": "bar"
+  }
+}
+
+###
+
+
+###
+GET http://localhost:7001
+Accept: application/json
+
+###
