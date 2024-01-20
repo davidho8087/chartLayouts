@@ -28,9 +28,9 @@ app.get('/', (req, res) => {
 const API_PREFIX = '/api';
 app.use(`${API_PREFIX}`, router)
 
-app.use((err, req, res) => {
-  logger.error(err.stack)
-  res.json({ message: `had an error: ${err.message}` })
+app.use((error, request, response) => {
+  logger.error(error)
+  response.json({ message: `had an error: ${error.message}` })
 })
 
 export default app
