@@ -1,8 +1,7 @@
 import { Router } from 'express'
-import { createSmartLayout } from './constroller/smartLayout.controller.js'
-
+import { createSmartLayoutController } from './routes/smartLayout/controllers.js'
 const router = Router()
 
-router.post('/smartLayout/create', createSmartLayout)
+router.post('/smartLayout/create', createSmartLayoutController)
 
 export default router
