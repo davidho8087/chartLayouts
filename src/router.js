@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { createSmartLayout } from './constroller/smartLayout.controller.js'
+import { createSmartLayout } from './controller/smartLayout.controller.js'
 
 const router = Router()
 

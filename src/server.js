@@ -1,14 +1,15 @@
+// server.js
 import express from 'express'
-
 import cors from 'cors'
 import router from './router.js'
 import logger from './lib/logger.js'
+
+
 const app = express()
 
 app.use(cors())
 // app.use(morgan('dev'))
 app.use(express.json())
-
 app.use(express.urlencoded({ extended: true }))
 
 app.get('/', (req, res, next) => {
