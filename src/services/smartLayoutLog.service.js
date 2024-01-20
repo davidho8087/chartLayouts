@@ -1,14 +1,43 @@
 import { handleError } from '../utils/errorHandler.js'
+import { dbKnex } from '../lib/dbConnection.js'
 
-const parameterizedQuery = 'SELECT * FROM store_outlet'
-export const createSmartLayoutLog = async (data) => {
+const parameterizedQuery = 'SELECT * FROM outlets'
+// const sqlStatement2 = `
+//     SELECT
+//         customers.name,
+//         COUNT(orders.id) AS total_orders,
+//         SUM(orders.amount) AS total_spent
+//     FROM
+//         customers
+//     JOIN
+//         orders ON customers.id = orders.customer_id
+//     GROUP BY
+//         customers.id
+//     HAVING
+//         SUM(orders.amount) > 1000
+//     ORDER BY
+//         total_spent DESC;
+// `;
+
+export const createSmartLayoutLog = async ({ type, prompt }) => {
+
   try {
-    // insert data into database table smart
+    // use parameterizedQuery to query
+    // const result = await dbKnex.raw(parameterizedQuery)
+    // return result.rows
+
+    const timestamp = new Date(); // Current timestamp
+
+    return await dbKnex('smart_layout_logs').insert({
+      type,
+      prompt,
+      raw_sql_statement: parameterizedQuery,
+      created_at: timestamp,
+      updated_at: timestamp,
+    }).returning('*'); // Adjust according to your needs
+
   } catch (error) {
-    // Handle the error as needed
-    // Handle both local and propagated errors in the same way
     handleError(error)
-    // Optionally rethrow the error if you want to handle it outside of this function
     throw error
   }
 }
