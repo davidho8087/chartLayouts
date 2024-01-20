@@ -18,7 +18,7 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-app.get('/', (req, res, next) => {
+app.get('/', (req, res) => {
   res.send('This is AI app service')
   // setTimeout(() => {
   //   next(new Error('hello error here'))
@@ -28,7 +28,7 @@ app.get('/', (req, res, next) => {
 const API_PREFIX = '/api';
 app.use(`${API_PREFIX}`, router)
 
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   logger.error(err.stack)
   res.json({ message: `had an error: ${err.message}` })
 })
