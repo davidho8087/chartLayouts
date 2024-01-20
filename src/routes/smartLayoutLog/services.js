@@ -1,5 +1,6 @@
-import { handleError } from '../utils/errorHandler.js'
-import { dbKnex } from '../lib/dbConnection.js'
+import { handleError } from '../../utils/errorHandler.js'
+import { dbKnex } from '../../lib/dbConnection.js'
+import logger from '../../lib/logger.js'
 
 const parameterizedQuery = 'SELECT * FROM outlets'
 // const sqlStatement2 = `
@@ -20,7 +21,7 @@ const parameterizedQuery = 'SELECT * FROM outlets'
 // `;
 
 export const createSmartLayoutLog = async ({ type, prompt }) => {
-
+logger.info('createSmartLayoutLogService')
   try {
     // use parameterizedQuery to query
     // const result = await dbKnex.raw(parameterizedQuery)

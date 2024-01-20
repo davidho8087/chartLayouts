@@ -16,11 +16,11 @@ const randomString = () => {
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-const logPath = path.join(__dirname, '..', '..', 'logs', 'vca-service-logs')
+const logPath = path.join(__dirname, '..', '..','..', 'logs', 'vca-service-logs')
 
 const transformForFile = () => {
   return {
-    transform: (info, opts) => {
+    transform: (info) => {
       const args = info[Symbol.for('splat')]
       if (args) {
         // Only keep the first argument as part of the main message
@@ -121,7 +121,7 @@ transports.push(configTransportWarn)
 
 const transformForConsoleTerminal = () => {
   return {
-    transform: (info, opts) => {
+    transform: (info) => {
       //combine message and args if any
       const args = info[Symbol.for('splat')]
       if (args) {

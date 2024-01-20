@@ -1,7 +1,7 @@
-import logger from '../lib/logger.js'
-import * as SmartLayoutLogServices from '../services/smartLayoutLog.service.js'
-export const createSmartLayout = async (req, res) => {
-  logger.info('createSmartLayout')
+import * as SmartLayoutLogServices from '../smartLayoutLog/services.js'
+import logger from '../../lib/logger.js'
+export const createSmartLayoutController = async (req, res) => {
+  logger.info('createSmartLayoutController')
   try {
     const { data } = req.body
     const result = await SmartLayoutLogServices.createSmartLayoutLog(data)
