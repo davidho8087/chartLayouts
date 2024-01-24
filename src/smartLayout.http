@@ -1,5 +1,6 @@
-###
-POST http://localhost:7001/api/smartLayout/create
+
+# Create Smart LayoutLog
+POST http://localhost:7001/api/smartLayoutLog/create
 Content-Type: application/json
 
 {
@@ -10,7 +11,18 @@ Content-Type: application/json
 }
 
 ###
+# Create SmartLayout
+POST http://localhost:7001/api/smartLayout/create
+Content-Type: application/json
 
+{
+  "data": {
+    "prompt": "show me list of dior store",
+    "type": "bar",
+    "smartLayoutLogId": "2",
+    "userId": "1"
+  }
+}
 
 ###
 GET http://localhost:7001

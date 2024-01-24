@@ -21,7 +21,9 @@ const parameterizedQuery = 'SELECT * FROM outlets'
 // `;
 
 export const createSmartLayoutLog = async ({ type, prompt }) => {
-logger.info('createSmartLayoutLogService')
+  logger.debug('createSmartLayoutLog')
+  logger.debug('type', type)
+  logger.debug('prompt', prompt)
   try {
     // use parameterizedQuery to query
     // const result = await dbKnex.raw(parameterizedQuery)
@@ -29,16 +31,66 @@ logger.info('createSmartLayoutLogService')
 
     const timestamp = new Date(); // Current timestamp
 
-    return await dbKnex('smart_layout_logs').insert({
+    // TODO
+    // Need to call AI to return sql statement and type
+
+    const [insertedRecord] = await dbKnex('smart_layout_logs').insert({
       type,
       prompt,
-      raw_sql_statement: parameterizedQuery,
+      raw_sql_statement: parameterizedQuery, // Ensure parameterizedQuery is defined
       created_at: timestamp,
       updated_at: timestamp,
-    }).returning('*'); // Adjust according to your needs
+    }).returning('*');
+
+    return insertedRecord; // return object
 
   } catch (error) {
     handleError(error)
     throw error
   }
 }
+
+export const findAllSmartLayoutLogs = async () => {
+  logger.debug('findAllSmartLayoutLogs')
+  try {
+    return await dbKnex('smart_layout_log').select('*');
+  } catch (error) {
+    // logger.error('Error in findAllSmartLayoutLogs:', error);
+    handleError(error, 'findAllSmartLayoutLogs');
+    throw error;
+  }
+}
+
+export const findOneSmartLayoutLog = async (id) => {
+  logger.debug('findOneSmartLayoutLog')
+  try {
+    const record = await dbKnex('smart_layout_log').where('id', id).first();
+    if (!record) {
+      throw new Error('Record not found');
+    }
+    return record;
+  } catch (error) {
+    // logger.error('Error in findOneSmartLayoutLog:', err);
+    handleError(error, 'findOneSmartLayoutLogService');
+    throw error;
+  }
+}
+
+export const deleteSmartLayoutLog = async (id) => {
+  logger.info('deleteSmartLayoutLogService')
+  try {
+    const rowsDeleted = await dbKnex('smart_layout_log')
+      .where('id', id) // assuming 'id' is the column name for the ID
+      .del();
+
+    if (rowsDeleted === 0) {
+      throw new Error('No record found with the specified ID.');
+    }
+
+    return `Record with ID ${id} deleted`;
+  } catch (error) {
+    handleError(error, 'deleteSmartLayoutLogService');
+    throw error;
+  }
+}
+
