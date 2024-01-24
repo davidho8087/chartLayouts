@@ -1,12 +1,12 @@
 import logger from '../lib/logger.js'
 
-export const handleError = (error) => {
-  logger.error('Error-Message:', error.message)
+export const handleError = (error, source) => {
+  logger.error(`Error in ${source}:`, error.message);
 
-  const errorCode = error.code || (error.cause && error.cause.code)
+  const errorCode = error.code || (error.cause && error.cause.code);
   if (errorCode) {
-    logger.error('Error-Code:', errorCode)
+    logger.error('Error-Code:', errorCode);
   }
 
-  logger.error('Full-Error:', error)
+  logger.error('Full-Error:', error);
 }
