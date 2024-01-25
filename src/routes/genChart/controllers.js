@@ -4,17 +4,18 @@ import * as UserServices from '../user/services.js'
 import * as ChartTypeServices from '../chartType/services.js'
 import * as Utils from '../../utils/validateFunctionString.js'
 import logger from '../../lib/logger.js'
+import { validateGenChartFunctionGroup } from '../../utils/validateFunctionString.js'
 
 
 export const createGenChartController = async (req, res) => {
   logger.debug('createGenChartController')
+
   try {
     const data = req.body.data
     const genChartLogId = Number(data.genChartLogId)
     const userId = Number(data.userId)
     const typeName = data.typeName
     const prompt = data.prompt
-
 
     logger.debug('incoming', data)
 
@@ -47,14 +48,14 @@ export const createGenChartController = async (req, res) => {
       })
     }
 
-    const rawSqlStatement = genChartLogRecord.raw_sql_statement
     const typeFunction = chartTypeRecord.function
-
-    // compile rawSqlStatement
-    const compiledSqlStatement = await GenChartServices.compileRawSqlStatement(rawSqlStatement)
+    const rawSqlStatement = genChartLogRecord.raw_sql_statement
 
     // validate Function string
     const validEvalFunctionString = Utils.validateFunctionString(typeFunction)
+
+    // compile rawSqlStatement
+    const compiledSqlStatement = await GenChartServices.compileRawSqlStatement(rawSqlStatement)
 
     // compile sql statement with dynamic function string
     const compiledResult = await GenChartServices.dynamicFunctionToCompiledSqlStatement(
@@ -96,6 +97,7 @@ export const createGenChartController = async (req, res) => {
 
 export const findOneGenChartController = async (req, res) => {
   logger.debug('findOneGenChartController')
+
   try {
     const id = req.params.id
     const record = await GenChartServices.findOneGenChart(id)
@@ -122,6 +124,7 @@ export const findOneGenChartController = async (req, res) => {
 
 export const deleteGenChartController = async (req, res) => {
   logger.debug('deleteSmartLayoutController')
+
   try {
     const id = req.params.id // Assuming the id is passed as a URL parameter
 
@@ -156,3 +159,77 @@ export const deleteGenChartController = async (req, res) => {
     })
   }
 }
+
+export const findAllByUserIdController = async (req, res) => {
+  logger.debug('findAllByUserIdController')
+
+  try {
+    const userId = Number(req.params.id) // Assuming the id is passed as a URL parameter
+
+    // First, find the user by userId
+    const userRecord = await UserServices.findOneUser(userId)
+
+    if (!userRecord) {
+      return res.status(404).json({
+        status: 404,
+        message: `User with ID ${userId} not found`,
+      })
+    }
+
+    // Call the GenChart service to find all records by userId
+    const genCharts = await GenChartServices.findAllByUserId(userId)
+
+    // Check if genCharts is an empty array
+    if (genCharts.length === 0) {
+      return res.status(404).json({
+        status: 404,
+        message: `No charts found for user with ID ${userId}`,
+      })
+    }
+
+    const chartFuncErrorMessages = validateGenChartFunctionGroup(genCharts)
+
+    if (chartFuncErrorMessages.length > 0) {
+      throw new Error(`Validation errors found: ${chartFuncErrorMessages.join(', ')}`)
+    }
+
+    const responsePayload = []
+
+    for (const genChart of genCharts) {
+      const typeFunctionString = genChart.function  // Extract function string
+
+      // Execute the function string using eval
+      const typeFunction = eval(`(${typeFunctionString})`)
+      const rawSqlStatement = genChart.raw_sql_statement  // Extract raw SQL statement
+
+      // Compile rawSqlStatement
+      const compiledSqlStatement = await GenChartServices.compileRawSqlStatement(rawSqlStatement)
+
+      // Compile SQL statement with dynamic function string
+      const compiledResult = await GenChartServices.dynamicFunctionToCompiledSqlStatement(
+        compiledSqlStatement,
+        typeFunction,
+      )
+
+      const eachResult = {
+        id: genChart.id,
+        prompt: genChart.prompt,
+        typeName: genChart.type,
+        compiledResult: compiledResult,
+      }
+      responsePayload.push(eachResult)
+    }
+
+    res.status(200).json({
+      status: 200,
+      data: responsePayload,
+      message: 'Loaded successfully',
+    })
+  } catch (error) {
+    res.status(500).send({
+      status: 'error',
+      message: error.message,
+    })
+  }
+}
+

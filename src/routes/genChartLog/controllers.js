@@ -3,7 +3,8 @@ import * as ChartTypeServices from '../chartType/services.js'
 import logger from '../../lib/logger.js'
 
 export const createGenChartLogController = async (req, res) => {
-  logger.debug('createSmartLayoutLogController')
+  logger.debug('createGenChartLogController')
+
   const data = req.body.data
   const typeName = data.typeName
   const prompt = data.prompt
@@ -18,7 +19,6 @@ export const createGenChartLogController = async (req, res) => {
       })
     }
 
-    logger.debug('data', data)
     const newRecord = await GenChartLogServices.createGenChartLog(data)
 
     const responseRecord = {
@@ -62,6 +62,7 @@ export const findAllGenChartLogController = async (req, res) => {
 
 export const findOneGenChartLogController = async (req, res) => {
   logger.debug('findOneGenChartLogController')
+
   const id = req.params.id
 
   try {
@@ -88,6 +89,7 @@ export const findOneGenChartLogController = async (req, res) => {
 
 export const deleteGenChartLogController = async (req, res) => {
   logger.debug('deleteGenChartLogController')
+
   const id = req.params.id
 
   try {

@@ -110,13 +110,5 @@ export const idParamSchema = checkSchema({
       errorMessage: 'ID must be an integer',
       options: { min: 1 },
     },
-    custom: {
-      options: (value) => {
-        if (typeof value !== 'number') {
-          throw new Error('id must be a number, not a string')
-        }
-        return true
-      },
-    },
   },
 })
