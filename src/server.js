@@ -10,12 +10,12 @@ const app = express()
 
 app.use(cors())
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(cors({ credentials: false }));
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
+app.use(cors({ credentials: false }))
 
 if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
+  app.use(morgan('dev'))
 }
 
 app.get('/', (req, res) => {
@@ -25,12 +25,13 @@ app.get('/', (req, res) => {
   // }, 1)
 })
 
-const API_PREFIX = '/api';
+const API_PREFIX = '/api'
 app.use(`${API_PREFIX}`, router)
 
-app.use((error, request, response) => {
-  logger.error(error)
-  response.json({ message: `had an error: ${error.message}` })
+// Updated error handling middleware
+app.use((err, req, res, next) => {
+  logger.error(err)
+  res.status(500).json({ message: `An error occurred: ${err.message}` })
 })
 
 export default app
