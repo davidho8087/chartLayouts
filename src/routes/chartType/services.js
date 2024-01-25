@@ -11,3 +11,13 @@ export const findOneChartType = async (typeName) => {
     throw error
   }
 }
+
+export const findAllChartType = async () => {
+  logger.debug('findAllChartTypes  Service')
+  try {
+    return await dbKnex('chart_types').where({})
+  } catch (error) {
+    handleError(error, 'findOneChartType Service')
+    throw error
+  }
+}

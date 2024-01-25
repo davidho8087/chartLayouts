@@ -1,25 +1,28 @@
 import { handleError } from '../../utils/errorHandler.js'
 import { dbKnex } from '../../lib/dbConnection.js'
 import logger from '../../lib/logger.js'
-
-const parameterizedQuery = 'SELECT store_code AS name, COUNT(*) AS count FROM cameras GROUP BY store_code ORDER BY store_code ASC;'
+import { mockSQLStatement }  from '../../mock.js'
 
 export const createGenChartLog = async (data) => {
   logger.debug('createGenChartLog')
 
+
+  const rawSqlStatement = mockSQLStatement.rawSqlStatement
   const type = data.typeName
   const prompt = data.prompt
+
+  console.log('rawSqlStatement', rawSqlStatement)
 
   try {
     const timestamp = new Date() // Current timestamp
 
     // TODO Need to call AI to return sql statement and type
-    const resultRawStatement = await dbKnex.raw(parameterizedQuery)
+    const resultRawStatement = await dbKnex.raw(rawSqlStatement)
 
     const [insertedRecord] = await dbKnex('gen_chart_logs').insert({
       type,
       prompt,
-      raw_sql_statement: parameterizedQuery, // Ensure parameterizedQuery is defined
+      raw_sql_statement: rawSqlStatement, // Ensure parameterizedQuery is defined
       created_at: timestamp,
       updated_at: timestamp,
     }).returning('*')

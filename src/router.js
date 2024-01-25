@@ -11,11 +11,14 @@ import {
   findAllGenChartLogController,
   deleteGenChartLogController,
 } from './routes/genChartLog/controllers.js'
+import { findAllChartTypeController } from './routes/chartType/controllers.js'
 import { handleInputErrors } from './middlewares.js'
 import { genChartLogSchema, genChartSchema, idParamSchema } from './utils/inputValidation.js'
 
-
 const router = Router()
+
+// chartType
+router.get('/chartType/findAll', findAllChartTypeController)
 
 // genChart
 router.post('/genChart/create',
