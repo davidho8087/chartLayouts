@@ -1,7 +1,7 @@
 {
   "name": "chart-service",
   "version": "1.0.0",
-  "description": "generate charts with sql statement",
+  "description": "generate charts with sql statement and dynamic function",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
