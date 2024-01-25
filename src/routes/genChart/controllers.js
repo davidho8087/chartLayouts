@@ -9,11 +9,12 @@ export const createGenChartController = async (req, res) => {
   logger.debug('createGenChartController')
   try {
     const data = req.body.data
-    const genChartLogId = data.genChartLogId
-    const userId = data.userId
+    const genChartLogId = Number(data.genChartLogId)
+    const userId = Number(data.userId)
     const typeName = data.typeName
+    const prompt = data.prompt
 
-    logger.debug('', data)
+    logger.debug('incoming', data)
 
     // First, find the user by userId
     const userRecord = await UserServices.findOneUser(userId)
@@ -35,9 +36,7 @@ export const createGenChartController = async (req, res) => {
     }
 
     // find genChartLog record
-
-    // TODO
-    const genChartLogRecord = await GenChartLogServices.findOneGenChartLog(genChartLogId, chartTypeRecord)
+    const genChartLogRecord = await GenChartLogServices.findOneGenChartLog(genChartLogId)
 
     if (!genChartLogRecord) {
       return res.status(404).json({
@@ -50,18 +49,25 @@ export const createGenChartController = async (req, res) => {
     const rawSqlStatement = genChartLogRecord.raw_sql_statement
 
     // Call the GenChart service to insert the new record
-    const newRecord = await GenChartServices.createGenChart(genChartLogRecord, rawSqlStatement)
+    const newRecord = await GenChartServices.createGenChart(
+      genChartLogRecord,
+      rawSqlStatement,
+      userId,
+      chartTypeRecord,
+    )
 
-    const responseResult = {
-      ...newRecord,
+    const responseRecord = {
+      id: newRecord.id,
+      prompt,
+      typeName,
+      typeFunction: chartTypeRecord.function,
       userId: userId,
+      dataSet: newRecord.dataSet,
     }
-
-    console.log('Response from createGenChart:', responseResult)
 
     res.status(200).json({
       status: 200,
-      data: responseResult,
+      data: responseRecord,
       message: 'Chart created successfully',
     })
 

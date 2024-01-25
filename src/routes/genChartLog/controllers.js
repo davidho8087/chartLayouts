@@ -6,6 +6,7 @@ export const createGenChartLogController = async (req, res) => {
   logger.debug('createSmartLayoutLogController')
   const data = req.body.data
   const typeName = data.typeName
+  const prompt = data.prompt
 
   try {
     const chartTypeRecord = await ChartTypeServices.findOneChartType(typeName)
@@ -22,11 +23,10 @@ export const createGenChartLogController = async (req, res) => {
 
     const responseRecord = {
       id: newRecord.id,
-      prompt: newRecord.prompt,
+      prompt,
       typeName,
       typeFunction: chartTypeRecord.function,
-      raw_sql_statement: newRecord.raw_sql_statement,
-      smartLayoutLogId: newRecord.id,
+      genChartLogId: newRecord.id,
       dataSet: newRecord.dataSet,
     }
 
