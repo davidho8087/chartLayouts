@@ -3,5 +3,10 @@ node_modules
 .env.development
 .env.qat
 .env.prod
+.env
 logs
 .idea
+.vscode
+build
+dist
+```
