@@ -29,7 +29,7 @@ const API_PREFIX = '/api'
 app.use(`${API_PREFIX}`, router)
 
 // Updated error handling middleware
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   logger.error(err)
   res.status(500).json({ message: `An error occurred: ${err.message}` })
 })
