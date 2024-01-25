@@ -5,8 +5,8 @@ import { handleError } from '../../utils/errorHandler.js'
 
 export const createGenChart = async (genChartLogRecord, rawSqlStatement, userId, chartTypeRecord) => {
   logger.debug('createGenChart Service')
-  const { prompt, type } = genChartLogRecord
 
+  const { prompt, type } = genChartLogRecord
   let newGenChart = null
   const timestamp = new Date() // Current timestamp
   const typeFunction = chartTypeRecord.function
@@ -49,6 +49,7 @@ export const createGenChart = async (genChartLogRecord, rawSqlStatement, userId,
 
 export const findOneGenChart = async (genChartId) => {
   logger.debug('findOneGenChart Service')
+
   try {
     return await dbKnex('gen_charts').where({ id: genChartId }).first()
   } catch (error) {
@@ -59,6 +60,7 @@ export const findOneGenChart = async (genChartId) => {
 
 export const findAllByUserId = async (userId) => {
   logger.debug('findAllByUserId Service')
+
   try {
     return await dbKnex('gen_charts')
       .select(
@@ -80,11 +82,11 @@ export const findAllByUserId = async (userId) => {
 }
 
 export const deleteGenChart = async (genChartId) => {
-  logger.debug('deleteSmartLayoutService')
+  logger.debug('deleteGenChart Service')
   let rowDeleted = null
+
   try {
     await dbKnex.transaction(async trx => {
-
       // First delete the junction table records
       await trx('gen_charts_users_permissions_user_links')
         .where({ gen_chart_id: genChartId })
@@ -96,7 +98,7 @@ export const deleteGenChart = async (genChartId) => {
         .delete()
     })
   } catch (error) {
-    handleError(error, 'deleteSmartLayout')
+    handleError(error, 'deleteGenChart Service')
     throw error
   }
 
@@ -106,27 +108,24 @@ export const deleteGenChart = async (genChartId) => {
 
 export const compileRawSqlStatement = async (rawSqlStatement) => {
   logger.debug('compileRawSqlStatement')
+
   try {
     const result = await dbKnex.raw(rawSqlStatement)
     return result.rows
   } catch (error) {
-    handleError(error, 'compileRawSqlStatement')
+    handleError(error, 'compileRawSqlStatement Service')
     throw error
   }
 }
 
-export const dynamicFunctionToCompiledSqlStatement = async (compiledSqlStatement, validEvalFunctionString) => {
-  logger.debug('compileRawSqlStatement')
+export const dynamicFunctionToCompiledSqlStatement = async (
+  compiledSqlStatement,
+  validEvalFunctionString,
+) => {
   try {
-    logger.debug('compiledSqlStatement', compiledSqlStatement)
-    logger.debug('typeFunctionString', validEvalFunctionString)
-
-
-    return validEvalFunctionString(compiledSqlStatement)
-
-
+    return await validEvalFunctionString(compiledSqlStatement)
   } catch (error) {
-    handleError(error, 'dynamicFunctionToCompiledSqlStatement')
+    handleError(error, 'dynamicFunctionToCompiledSqlStatement Service')
     throw error
   }
 }

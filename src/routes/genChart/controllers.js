@@ -9,6 +9,7 @@ import { validateGenChartFunctionGroup } from '../../utils/validateFunctionStrin
 
 export const createGenChartController = async (req, res) => {
   logger.debug('createGenChartController')
+
   try {
     const data = req.body.data
     const genChartLogId = Number(data.genChartLogId)
@@ -96,6 +97,7 @@ export const createGenChartController = async (req, res) => {
 
 export const findOneGenChartController = async (req, res) => {
   logger.debug('findOneGenChartController')
+
   try {
     const id = req.params.id
     const record = await GenChartServices.findOneGenChart(id)
@@ -122,6 +124,7 @@ export const findOneGenChartController = async (req, res) => {
 
 export const deleteGenChartController = async (req, res) => {
   logger.debug('deleteSmartLayoutController')
+
   try {
     const id = req.params.id // Assuming the id is passed as a URL parameter
 
@@ -159,6 +162,7 @@ export const deleteGenChartController = async (req, res) => {
 
 export const findAllByUserIdController = async (req, res) => {
   logger.debug('findAllByUserIdController')
+
   try {
     const userId = Number(req.params.id) // Assuming the id is passed as a URL parameter
 
@@ -184,6 +188,7 @@ export const findAllByUserIdController = async (req, res) => {
     }
 
     const chartFuncErrorMessages = validateGenChartFunctionGroup(genCharts)
+
     if (chartFuncErrorMessages.length > 0) {
       throw new Error(`Validation errors found: ${chartFuncErrorMessages.join(', ')}`)
     }
@@ -214,9 +219,6 @@ export const findAllByUserIdController = async (req, res) => {
       }
       responsePayload.push(eachResult)
     }
-
-
-    logger.debug('responsePayload', responsePayload)
 
     res.status(200).json({
       status: 200,
