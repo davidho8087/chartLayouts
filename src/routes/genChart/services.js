@@ -63,6 +63,8 @@ export const findAllByUserId = async (userId) => {
     return await dbKnex('gen_charts')
       .select(
         'gen_charts.id',
+        'gen_charts.prompt',
+        'gen_charts.type',
         'gen_charts.raw_sql_statement',
         'gen_charts.function',
       )
