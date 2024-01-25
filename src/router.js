@@ -1,13 +1,15 @@
 import { Router } from 'express'
 import {
   createGenChartController,
-  deleteGenChartController,
+  findAllByUserIdController,
   findOneGenChartController,
+  deleteGenChartController,
 } from './routes/genChart/controllers.js'
 import {
   createGenChartLogController,
-  deleteGenChartLogController, findAllGenChartLogController,
   findOneGenChartLogController,
+  findAllGenChartLogController,
+  deleteGenChartLogController,
 } from './routes/genChartLog/controllers.js'
 import { handleInputErrors } from './middlewares.js'
 import { genChartLogSchema, genChartSchema, idParamSchema } from './utils/inputValidation.js'
@@ -15,17 +17,18 @@ import { genChartLogSchema, genChartSchema, idParamSchema } from './utils/inputV
 
 const router = Router()
 
-// Smart Layout
+// genChart
 router.post('/genChart/create',
   ...genChartSchema,
   handleInputErrors,
   createGenChartController,
 )
+router.get('/genChart/findAllByUserId/:id', ...idParamSchema, handleInputErrors, findAllByUserIdController)
 router.get('/genChart/findOne/:id', ...idParamSchema, handleInputErrors, findOneGenChartController)
 router.delete('/genChart/delete/:id', ...idParamSchema, handleInputErrors, deleteGenChartController)
 
 
-// Smart Layout Log
+// genChartLog
 router.post('/genChartLog/create',
   ...genChartLogSchema,
   handleInputErrors,

@@ -19,3 +19,19 @@ export const validateFunctionString = (typeFunctionString) => {
     throw error
   }
 }
+
+export const validateGenChartFunctionGroup = (genCharts) => {
+  let errorMessages = []
+
+  genCharts.forEach(genChart => {
+    const typeFunction = genChart.function
+    const isValidFunction = validateFunctionString(typeFunction)
+
+    // Accumulate errors if the function string is not valid
+    if (!isValidFunction) {
+      errorMessages.push(`Invalid function string in chart with ID ${genChart.id}`)  // Assuming genChart has an 'id' property
+    }
+  })
+
+  return errorMessages
+}

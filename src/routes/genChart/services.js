@@ -57,6 +57,26 @@ export const findOneGenChart = async (genChartId) => {
   }
 }
 
+export const findAllByUserId = async (userId) => {
+  logger.debug('findAllByUserId Service')
+  try {
+    return await dbKnex('gen_charts')
+      .select(
+        'gen_charts.id',
+        'gen_charts.raw_sql_statement',
+        'gen_charts.function',
+      )
+      .leftJoin('gen_charts_users_permissions_user_links',
+        function() {
+          this.on('gen_charts.id', '=', 'gen_charts_users_permissions_user_links.gen_chart_id')
+        })
+      .where('gen_charts_users_permissions_user_links.user_id', userId)
+  } catch (error) {
+    handleError(error, 'findAllByUserId Service')
+    throw error
+  }
+}
+
 export const deleteGenChart = async (genChartId) => {
   logger.debug('deleteSmartLayoutService')
   let rowDeleted = null
