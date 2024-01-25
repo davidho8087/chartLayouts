@@ -3,15 +3,7 @@ import logger from '../../lib/logger.js'
 import { dbKnex } from '../../lib/dbConnection.js'
 import { handleError } from '../../utils/errorHandler.js'
 
-export const createGenChart = async (
-  genChartLogRecord,
-  rawSqlStatement,
-  userId,
-  chartTypeRecord,
-) => {
-  console.log('genChartLogRecord', genChartLogRecord)
-  console.log('rawSqlStatement', rawSqlStatement)
-  console.log('userId', userId)
+export const createGenChart = async (genChartLogRecord, rawSqlStatement, userId, chartTypeRecord) => {
   logger.debug('createGenChart Service')
   const { prompt, type } = genChartLogRecord
 
@@ -22,7 +14,6 @@ export const createGenChart = async (
 
   try {
     await dbKnex.transaction(async trx => {
-
       // Insert the new smart layout record
       [newGenChart] = await trx('gen_charts').insert({
         prompt,
@@ -44,9 +35,7 @@ export const createGenChart = async (
 
       // Insert the link with the new order
       await trx('gen_charts_users_permissions_user_links').insert({
-        gen_chart_id: newGenChart.id,
-        user_id: userId,
-        gen_chart_order: nextOrder,
+        gen_chart_id: newGenChart.id, user_id: userId, gen_chart_order: nextOrder,
       })
     })
   } catch (error) {
@@ -91,3 +80,34 @@ export const deleteGenChart = async (genChartId) => {
 
   return rowDeleted
 }
+
+
+export const compileRawSqlStatement = async (rawSqlStatement) => {
+  logger.debug('compileRawSqlStatement')
+  try {
+    const result = await dbKnex.raw(rawSqlStatement)
+    return result.rows
+  } catch (error) {
+    handleError(error, 'compileRawSqlStatement')
+    throw error
+  }
+}
+
+export const dynamicFunctionToCompiledSqlStatement = async (compiledSqlStatement, validEvalFunctionString) => {
+  logger.debug('compileRawSqlStatement')
+  try {
+    logger.debug('compiledSqlStatement', compiledSqlStatement)
+    logger.debug('typeFunctionString', validEvalFunctionString)
+
+
+    return validEvalFunctionString(compiledSqlStatement)
+
+
+  } catch (error) {
+    handleError(error, 'dynamicFunctionToCompiledSqlStatement')
+    throw error
+  }
+}
+
+
+

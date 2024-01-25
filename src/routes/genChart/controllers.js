@@ -2,6 +2,7 @@ import * as GenChartLogServices from '../genChartLog/services.js'
 import * as GenChartServices from './services.js'
 import * as UserServices from '../user/services.js'
 import * as ChartTypeServices from '../chartType/services.js'
+import * as Utils from '../../utils/validateFunctionString.js'
 import logger from '../../lib/logger.js'
 
 
@@ -13,6 +14,7 @@ export const createGenChartController = async (req, res) => {
     const userId = Number(data.userId)
     const typeName = data.typeName
     const prompt = data.prompt
+
 
     logger.debug('incoming', data)
 
@@ -45,8 +47,20 @@ export const createGenChartController = async (req, res) => {
       })
     }
 
-    // Extract the rawSqlStatement
     const rawSqlStatement = genChartLogRecord.raw_sql_statement
+    const typeFunction = chartTypeRecord.function
+
+    // compile rawSqlStatement
+    const compiledSqlStatement = await GenChartServices.compileRawSqlStatement(rawSqlStatement)
+
+    // validate Function string
+    const validEvalFunctionString = Utils.validateFunctionString(typeFunction)
+
+    // compile sql statement with dynamic function string
+    const compiledResult = await GenChartServices.dynamicFunctionToCompiledSqlStatement(
+      compiledSqlStatement,
+      validEvalFunctionString,
+    )
 
     // Call the GenChart service to insert the new record
     const newRecord = await GenChartServices.createGenChart(
@@ -62,7 +76,7 @@ export const createGenChartController = async (req, res) => {
       typeName,
       typeFunction: chartTypeRecord.function,
       userId: userId,
-      dataSet: newRecord.dataSet,
+      compiledResult: compiledResult,
     }
 
     res.status(200).json({
@@ -74,7 +88,7 @@ export const createGenChartController = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       status: 'error',
-      message: 'Failed to create chart',
+      message: `Failed to create chart: ${error.message}`,
     })
 
   }
@@ -83,7 +97,7 @@ export const createGenChartController = async (req, res) => {
 export const findOneGenChartController = async (req, res) => {
   logger.debug('findOneGenChartController')
   try {
-    const id = req.params.id // Extract the ID from the URL parameter
+    const id = req.params.id
     const record = await GenChartServices.findOneGenChart(id)
 
     if (!record) {
@@ -136,6 +150,9 @@ export const deleteGenChartController = async (req, res) => {
       message: 'Chart deleted successfully',
     })
   } catch (error) {
-    res.status(500).json({ status: 'error', message: error.message })
+    res.status(500).send({
+      status: 'error',
+      message: error.message,
+    })
   }
 }

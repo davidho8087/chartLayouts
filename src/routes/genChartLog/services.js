@@ -22,7 +22,7 @@ const parameterizedQuery = 'SELECT store_code AS name, COUNT(*) AS count FROM ca
 // `;
 
 export const createGenChartLog = async (data) => {
-  const type = data.type
+  const type = data.typeName
   const prompt = data.prompt
 
   logger.debug('createGenChartLog')
